@@ -1,12 +1,79 @@
-
 // ============================================================================
-//  constances
+//  constances, global values
 //============================================================================
 /* Dictionary that assigns number to rps strings
    If a subtraction between 2 keys is 1 or -2, it's a 
    winning condition, -1 or 2 are losing condition */
 const dict = { "paper": 0, "scissor": 1, "rock": 2,
                0: "paper", 1: "scissor", 2: "rock" };
+
+
+
+// ============================================================================
+// This function asks the user if they wants to play a game of rock paper 
+// scissor. Game() is called once it receives a confirmation
+//     It takes no arguement
+//     Returns none
+// ============================================================================
+function Prompter() {
+    /* Ask the player to play a game. Exit if player doesn't play */
+    if (window.confirm("Do you want to play rock paper scissor?")) {
+        Game();
+    } else {
+        window.alert("Game not excecuted. Thank you");
+        console.log("Game is terminated");
+        return;
+    }
+} // End of func
+
+
+
+// ============================================================================
+// This function plays the game out for 5 rounds and announces results on the  
+// console's screen
+//     It takes no arguement
+//     Returns none
+// ============================================================================
+function Game() {
+    // Keep score on player and computer
+    let playerScore = 0;
+    let compScore = 0;
+
+    /* Iterate 5 times */
+    for (let i = 0; i < 5; i++) {
+        /* Try catch block for error handling */
+        try {
+            // Call playRound()   
+            switch(playRound(playerPlay(), computerPlay())) {
+                case 1:
+                    // append player's score if the player wins,
+                    playerScore += 1;
+                    break;
+                case 2:
+                    // append computer's score if the computer wins
+                    compScore += 1;
+                    break;
+                default:
+                    break;
+            }
+        } catch(err) {
+            console.log("The game is terminated");
+            return;
+        }
+    }
+
+    // Anouncing total score
+    console.log("Player's score:   " + playerScore + 
+                "\nComputer's score: " + compScore);
+    // Announcing the winner, or if it's a draw
+    if(playerScore == compScore) {
+        console.log("It's a draw!");
+    } else {
+        let x = playerScore > compScore ? "player":"Computer";
+        console.log(x + " wins the game");
+    }
+} // End of func
+
 
 
 // ============================================================================
@@ -38,12 +105,11 @@ function playRound(playerNum, computerNum) {
             console.log("computer wins this round. " + 
                          computer + " beats " + player + ".");
             return 2;
-        // Default
+        // Default. Throw an error 
         default:
-            console.log("Error calculating.");
-            return;
+            throw "Error calculating.";
     }   
-}
+} // End of func
 
 
 
@@ -57,7 +123,7 @@ function computerPlay() {
     var ranVal = Math.floor(Math.random() * 3);
     // 0 = paper, 1 = scissor, 2 = rock
     return ranVal;
-}
+} // End of func
 
 
 
@@ -69,76 +135,32 @@ function computerPlay() {
 // ============================================================================
 function playerPlay() {
     // Prompt player for value
-    let player = window.prompt("Rock, paper, or scissor?");
-    /* Compare lowercased input to dictionary. Keep asking 
-       til the right answer is given */
-    while (!(player.toLowerCase() in dict)) {
-        player = window.prompt(player + " is not valid. Please type again");
+    let player = (window.prompt("Rock, paper, or scissor?")).toLowerCase();
+
+    /* If the answer is not in dict, Loop until 
+       the answer is right or function terminated */
+    while (!(player in dict)) {
+        // If the player hits cancel or gives null answer
+        if(!player) {
+            // Recursively calling the function if the player still wants to play
+            if (window.confirm(
+                "Do you still want to play?\nOK to play, Cancel to exit")){
+                return playerPlay();
+             // Throws an error otherwise
+            } else {
+                window.alert("The game is stopped. Thank you");
+                throw "The game is stopped.";
+            }
+        }
+        // Prompt for answer again otherwise
+        player = (window.prompt(player + " is not valid. Please type again")).toLowerCase();
     }
     // Return the dictionary key
-    alert("Your answer was " + player.toLowerCase());
-    return dict[player.toLowerCase()];
-}
+    window.alert("Your answer was " + player);
+    return dict[player];
+} // End of func
 
 
-
-// ============================================================================
-// This function plays the game out for 5 rounds and announces results on the  
-// console's screen
-//     It takes no arguement
-//     Returns none
-// ============================================================================
-function Game() {
-    // Keep score on player and computer
-    let playerScore = 0;
-    let compScore = 0;
-
-    // Iterate 5 times
-    for (let i = 0; i < 5; i++) {
-        // Call playRound()
-        // append player's score if the player wins,
-        // append computer's score if the computer wins
-        switch(playRound(playerPlay(), computerPlay())) {
-            case 1:
-                playerScore += 1;
-                break;
-            case 2:
-                compScore += 1;
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Anouncing total score
-    console.log("Player's score:   " + playerScore + 
-                "\nComputer's score: " + compScore);
-    // Announcing the winner, or if it's a draw
-    if(playerScore == compScore) {
-        console.log("It's a draw!");
-    } else {
-        let x = playerScore > compScore ? "player":"Computer";
-        console.log(x + " wins the game");
-    }
-}
-
-
-
-// ============================================================================
-// This function asks the user if they wants to play a game of rock paper 
-// scissor. Game() is called once it receives a confirmation
-//     It takes no arguement
-//     Returns none
-// ============================================================================
-function Prompter() {
-    // Ask the player to play a game
-    if (confirm("Do you want to play rock paper scissor?")) {
-        Game();
-    } else {
-        alert("Game not excecuted. Thank you");
-        return;
-    }
-}
 
 // ============================================================================
 // Calling the game
