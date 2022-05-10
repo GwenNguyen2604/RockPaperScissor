@@ -1,36 +1,48 @@
+
+// ============================================================================
+//  constances
+//============================================================================
+/* Dictionary that assigns number to rps strings
+   If a subtraction between 2 keys is 1 or -2, it's a 
+   winning condition, -1 or 2 are losing condition */
+const dict = { "paper": 0, "scissor": 1, "rock": 2,
+               0: "paper", 1: "scissor", 2: "rock" };
+
+
 // ============================================================================
 // This function compares the answers and determines the winner of a round. The
 // result is announced on screen.
-//     It takes 2 strings as arguement
+//     It takes 2 integers as arguement
 //     Returns 0 if draw or invalid input, 1 if payer wins, 2 if computer wins.
 // ============================================================================
-function playRound(player, computer) {
-    // Create a dictionary and assign number to rps strings
-    var dict = { "paper": 0, "scissor": 1, "rock":2 };
-
-    // If the inputs are valid
-    if (player in dict) {
-        // math. Basic but neat.
-        var result = dict[player] - dict[computer];
+function playRound(playerNum, computerNum) { 
+    // Variables
+    let computer = dict[computerNum];       // string of computer's result
+    let player = dict[playerNum];           // string of player's result
+    let result = playerNum - computerNum;   // math. Get the result
+    switch (result) {
         // Stalemate condition
-        if(0 == result) {
-            console.log("Both are " + computer + ". Draw.");
+        case 0:
+            console.log("Both are " + computer + 
+                         ". This round is a draw!");
             return 0;
-        }
         // Conditions where the player wins
-        else if ((1 == result) || (-2 == result)) {
-            console.log("player wins. " + player + " beats " + computer + ".");
+        case 1:
+        case -2:
+            console.log("player wins this round. " + 
+                         player + " beats " + computer + ".");
             return 1;
-        }
-        // Condirions where computer wins
-        else if ((-1 == result) || (2 == result)) {
-            console.log("computer wins. " + computer + " beats " + player + ".");
+        // Conditions where computer wins
+        case -1:
+        case 2:
+            console.log("computer wins this round. " + 
+                         computer + " beats " + player + ".");
             return 2;
-        }
-    }
-    // If the input is invalid
-    console.log("invalid input");
-    return 0;
+        // Default
+        default:
+            console.log("Error calculating.");
+            return;
+    }   
 }
 
 
@@ -38,40 +50,34 @@ function playRound(player, computer) {
 // ============================================================================
 // This function determines the compputer's answer. The answer will be randome
 //     It takes no arguement
-//     Returns a string of either "rock", "paper", or "scissor". 
-//     Returns "error" if the previous 3 strings cannot be generated
+//     Returns 0, 1 or 2
 // ============================================================================
 function computerPlay() {
     // Generate a randome number from 0-2
     var ranVal = Math.floor(Math.random() * 3);
-    // 0 = rock, 1 = paper, 2 = scissor
-    switch(ranVal) {
-        case 0:
-            return "rock";
-        case 1:
-            return "paper";
-        case 2:
-            return "scissor";
-        default:
-            break;
-    }
-    // returns rock if the answer cannot be generated.
-    return "rock";
+    // 0 = paper, 1 = scissor, 2 = rock
+    return ranVal;
 }
 
 
 
 // ============================================================================
-// This function prompts the user to play the game and gets the input.
+// This function prompts the user to play the game and gets the input. It loops
+// if the input is not appropriate
 //     It takes no arguement
-//     Returns the user input string.
+//     Returns an integer that relfects user's input.
 // ============================================================================
 function playerPlay() {
     // Prompt player for value
-    let player = window.prompt(
-                "Let's play for 5 rounds\nRock, paper, or scissor?");
-    // returns the lowercased input
-    return player.toLowerCase();
+    let player = window.prompt("Rock, paper, or scissor?");
+    /* Compare lowercased input to dictionary. Keep asking 
+       til the right answer is given */
+    while (!(player.toLowerCase() in dict)) {
+        player = window.prompt(player + " is not valid. Please type again");
+    }
+    // Return the dictionary key
+    alert("Your answer was " + player.toLowerCase());
+    return dict[player.toLowerCase()];
 }
 
 
@@ -82,14 +88,14 @@ function playerPlay() {
 //     It takes no arguement
 //     Returns none
 // ============================================================================
-function game() {
+function Game() {
     // Keep score on player and computer
     let playerScore = 0;
     let compScore = 0;
 
     // Iterate 5 times
     for (let i = 0; i < 5; i++) {
-        // Call playRound(), which calls playerPlay() and computerPlay()
+        // Call playRound()
         // append player's score if the player wins,
         // append computer's score if the computer wins
         switch(playRound(playerPlay(), computerPlay())) {
@@ -107,12 +113,10 @@ function game() {
     // Anouncing total score
     console.log("Player's score:   " + playerScore + 
                 "\nComputer's score: " + compScore);
-
     // Announcing the winner, or if it's a draw
     if(playerScore == compScore) {
         console.log("It's a draw!");
-    }
-    else {
+    } else {
         let x = playerScore > compScore ? "player":"Computer";
         console.log(x + " wins the game");
     }
@@ -121,6 +125,22 @@ function game() {
 
 
 // ============================================================================
-// Calling game
+// This function asks the user if they wants to play a game of rock paper 
+// scissor. Game() is called once it receives a confirmation
+//     It takes no arguement
+//     Returns none
 // ============================================================================
-game();
+function Prompter() {
+    // Ask the player to play a game
+    if (confirm("Do you want to play rock paper scissor?")) {
+        Game();
+    } else {
+        alert("Game not excecuted. Thank you");
+        return;
+    }
+}
+
+// ============================================================================
+// Calling the game
+// ============================================================================
+Prompter();
