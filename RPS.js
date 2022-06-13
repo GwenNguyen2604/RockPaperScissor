@@ -18,7 +18,7 @@ let compScore = 0;
 // ============================================================================
 function PlayRound(player) {
     /* Iterate as long as neither player has reached score of 5 */
-    if(playerScore < 3 && compScore < 3) {
+    if(playerScore < 5 && compScore < 5) {
         /* Try catch block for error handling */
         try {
             // Call playRound()   
@@ -43,7 +43,7 @@ function PlayRound(player) {
         }
     }
 
-    if(playerScore == 3 || compScore == 3) {
+    if(playerScore == 5 || compScore == 5) {
         // Announcing the winner
         let x = playerScore > compScore ? 'Player':'Computer';
         writeToDoc('The winner is ' + x);
@@ -116,7 +116,7 @@ function writeToDoc(str) {
 /* Only run the game if neither player has reached 5 points */
 const  ans = document.querySelectorAll("button");
 ans.forEach(button => button.addEventListener("click", function() {
-    if(playerScore < 3 && compScore < 3) {
+    if(playerScore < 5 && compScore < 5) {
         let player = this.getAttribute("name");
         PlayRound(dict[player]);
     }
